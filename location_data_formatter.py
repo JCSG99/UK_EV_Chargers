@@ -50,4 +50,8 @@ data = data[columns]
 
 data['access24Hours'] = data['access24Hours'].fillna(0)
 
+# Update longitude values for ChargePlace Scotland controllers
+chargeplace_scotland = data['deviceControllerName'] == 'ChargePlace Scotland'
+data.loc[chargeplace_scotland & (data['longitude'] > 2), 'longitude'] = data.loc[chargeplace_scotland & (data['longitude'] > 2), 'longitude'] * -1
+
 data.to_csv('csv/chargers.csv', index=True)
