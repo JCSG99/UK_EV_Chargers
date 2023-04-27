@@ -56,6 +56,11 @@ data['access24Hours'] = data['access24Hours'].fillna(0)
 chargeplace_scotland = data['deviceControllerName'] == 'ChargePlace Scotland'
 data.loc[chargeplace_scotland & (data['longitude'] > 2), 'longitude'] = data.loc[chargeplace_scotland & (data['longitude'] > 2), 'longitude'] * -1
 
+#flipping longitude of datapoints which are incorrect
+data.loc[data['chargeDeviceID'] == '935f3eec582eb6b298c1625ba73c4e8a', ['longitude']] = data.loc[data['chargeDeviceID'] == '935f3eec582eb6b298c1625ba73c4e8a', ['longitude']] * -1
+data.loc[data['chargeDeviceID'] == '4c8e3dd932db78e0df6d190818124b4a', ['longitude']] = data.loc[data['chargeDeviceID'] == '4c8e3dd932db78e0df6d190818124b4a', ['longitude']] * -1
+data.loc[data['chargeDeviceID'] == '8bddf56bd1be124e99f7b902c4e5b203', ['longitude']] = data.loc[data['chargeDeviceID'] == '8bddf56bd1be124e99f7b902c4e5b203', ['longitude']] * -1
+
 # Update location values for locations where long and lat wrong way around
 data.loc[data['chargeDeviceID'] == '53d474266f0eba48e4df65250fe2c56b', ['latitude', 'longitude']] = data.loc[data['chargeDeviceID'] == '53d474266f0eba48e4df65250fe2c56b', ['longitude', 'latitude']].values
 data.loc[data['chargeDeviceID'] == '98555e2a46b8f678592b7caba74504cf', ['latitude', 'longitude']] = data.loc[data['chargeDeviceID'] == '98555e2a46b8f678592b7caba74504cf', ['longitude', 'latitude']].values
@@ -73,8 +78,9 @@ for index, row in data.iterrows():
             longitude = postcode_data['result']['longitude']
             data.loc[index, 'longitude'] = longitude
 
-# Delete chargers from SureCharge with no location
+# Delete chargers from SureCharge with no location and bp pulse st lucia
 delete_SureCharge = (data['deviceControllerName'] == 'SureCharge/FM Conway') & (data['latitude'] == 0)
 data = data.drop(data[delete_SureCharge].index)
+data = data[data['chargeDeviceID'] != '1afd756ec91b443657761ee608709ad4']
 
 data.to_csv('csv/chargers.csv', index=True)
